@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -40,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'book_shop'
+    'book_shop',
+    'catalog.apps.CatalogConfig'
 ]
 
 MIDDLEWARE = [
@@ -83,7 +88,6 @@ WSGI_APPLICATION = 'book_shop.wsgi.application'
 #        'NAME': BASE_DIR / 'db.sqlite3',
 #    }
 #}
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
