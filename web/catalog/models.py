@@ -1,4 +1,7 @@
+from django.urls import reverse #Used to generate URLs by reversing the URL patterns
 from django.db import models
+import uuid # Required for unique book instances
+
 
 # Create your models here.
 
@@ -10,6 +13,19 @@ class Book(models.Model):
     isbn = models.CharField('ISBN',max_length=13)
     genre = models.ManyToManyField('Genre', help_text="Select a genre for this book")
 
+    def __str__(self):
+        """
+        String for representing the Model object.
+        """
+        return self.title
+
+
+    def get_absolute_url(self):
+        """
+        Returns the url to access a particular book instance.
+        """
+        return reverse('book-detail', args=[str(self.id)])
+
 class Author(models.Model):
     """This is class representing an authors"""
     first_name = models.CharField(max_length=100)
@@ -17,6 +33,49 @@ class Author(models.Model):
     date_of_birth = models.DateField(null=True, blank=True)
     date_of_death = models.DateField('Died', null=True, blank=True)
 
+    def get_absolute_url(self):
+        """
+        Returns the url to access a particular author instance.
+        """
+        return reverse('author-detail', args=[str(self.id)])
+
+
+    def __str__(self):
+        """
+        String for representing the Model object.
+        """
+        return '%s, %s' % (self.last_name, self.first_name)
+
 class Genre(models.Model):
     """This class representing a book genre (e.g. Science Fiction, Non Fiction)"""
     name = models.CharField(max_length=200, help_text="Enter a book genre (e.g. Science Fiction, French Poetry etc.)")
+
+    def __str__(self):
+        """
+        String for representing the Model object (in Admin site etc.)
+        """
+        return self.name
+
+
+class Publisher(models.Model):
+    """This class representing a book genre (e.g. Science Fiction, Non Fiction)"""
+    name = models.CharField(max_length=200, help_text="Enter a publisher")
+    city = models.ForeignKey('City')
+
+    def __str__(self):
+        """
+        String for representing the Model object (in Admin site etc.)
+        """
+        return self.name
+
+class City(models.Model):
+    """This class representing """
+    name = models.CharField(max_length=200, help_text="Enter a city")
+
+    def __str__(self):
+        """
+        String for representing the Model object (in Admin site etc.)
+        """
+        return self.name
+
+

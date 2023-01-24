@@ -17,9 +17,9 @@ services:
       # The environment variable credentials that is needed 
       # in django settings for Postgres to work.
       DB_HOST: postgres
-      DB_NAME: postgres
-      DB_USER: postgres
-      DB_PASS: '03270327'
+      DB_NAME: book_shop_db
+      DB_USER: bookshop_admin
+      DB_PASS: '0327'
       DB_PORT: 5432
     depends_on:
       - postgres
@@ -45,9 +45,9 @@ services:
     environment:
       # The environment variable credentials that is needed 
       # in django settings for Postgres to work.
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 03270327
+      POSTGRES_DB: book_shop_db
+      POSTGRES_USER: bookshop_admin
+      POSTGRES_PASSWORD: 0327
 
 volumes:
   web-django:
