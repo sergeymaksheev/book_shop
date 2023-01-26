@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'book_shop',
-    'catalog.apps.CatalogConfig'
+    'catalog.apps.CatalogConfig',
+    'user_profile.apps.UserProfileConfig',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -146,3 +148,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL)
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 2,
+}
