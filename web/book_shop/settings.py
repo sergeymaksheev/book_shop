@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'book_shop',
     'catalog.apps.CatalogConfig',
-    'user_profile.apps.UserProfileConfig',
+    'users.apps.UsersConfig',
     'rest_framework'
 ]
 
@@ -119,6 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'users.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -140,9 +141,14 @@ USE_TZ = True
 STATIC_URL = 'usr/src/app/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL)
 
-#STATICFILES_DIRS = [
-#    'usr/src/app/static/',
-#]
+# STATICFILES_DIRS = [
+#     'usr/src/app/static/',
+# ]
+
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, 'usr/src/app/static/'),
+# )
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -153,4 +159,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 2,
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
+    ]
 }

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 '''class UserProfile(models.Model):
@@ -15,3 +16,8 @@ from django.db import models
         String for representing the Model object (in Admin site etc.)
         """
         return self.user'''
+
+class CustomUser(AbstractUser):
+    
+    def __str__(self) -> str:
+        return self.username

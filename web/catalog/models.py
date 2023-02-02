@@ -1,9 +1,10 @@
 from collections import UserString
 from django.urls import reverse #Used to generate URLs by reversing the URL patterns
 from django.db import models
+
 import uuid # Required for unique book instances
 
-
+from users.models import CustomUser
 # Create your models here.
 
 class Book(models.Model):
@@ -17,6 +18,7 @@ class Book(models.Model):
     number_of_pages = models.IntegerField(help_text="Number_of_pages")
     price = models.IntegerField(help_text="Write your price here")
     quantity = models.IntegerField(help_text="Number of books in the store")
+    user = models.ForeignKey(CustomUser, verbose_name='User', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         """
