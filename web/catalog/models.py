@@ -1,11 +1,12 @@
 from collections import UserString
 from django.urls import reverse #Used to generate URLs by reversing the URL patterns
 from django.db import models
-
+from django.core.validators import MinValueValidator
 import uuid # Required for unique book instances
 
 from users.models import CustomUser
 # Create your models here.
+
 
 class Book(models.Model):
     """This class representing a book(but not a specific copy of book)"""
@@ -15,9 +16,10 @@ class Book(models.Model):
     isbn = models.CharField('ISBN',max_length=17)
     genre = models.ManyToManyField('Genre', help_text="Select a genre for this book")
     publisher = models.ForeignKey('Publisher', on_delete=models.SET_NULL, null=True)
+    year = models.IntegerField(help_text="Enter a year here", null=True)
+    weight = models.IntegerField(help_text="Enter a book's weight here", null=True)
     number_of_pages = models.IntegerField(help_text="Number_of_pages")
-    price = models.IntegerField(help_text="Write your price here")
-    quantity = models.IntegerField(help_text="Number of books in the store")
+    price = models.IntegerField(validators=[MinValueValidator(0)], help_text="Write your price here")
     user = models.ForeignKey(CustomUser, verbose_name='User', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
@@ -32,6 +34,22 @@ class Book(models.Model):
         Returns the url to access a particular book instance.
         """
         return reverse('book-detail', args=[str(self.id)])
+
+
+class TheRestOfTheBook(models.Model):
+    """
+    Model representing the rest of the books in the shop
+    """
+
+    book = models.OneToOneField(Book, on_delete=models.SET_NULL, null=True, unique=Book)
+    quantity = models.IntegerField(validators=[MinValueValidator(0)], help_text="Number of books in the store", default=0)
+
+
+    def __str__(self) -> str:
+        """
+        String for representing the Model object
+        """
+        return f'{self.book.title}, Остаток книг - {self.quantity}'
 
 class Author(models.Model):
     """This is class representing an authors"""
@@ -86,21 +104,3 @@ class City(models.Model):
         String for representing the Model object (in Admin site etc.)
         """
         return self.name
-
-
-class Orders_detail(models.Model):
-    """This class representing your order detail"""
-    book = models.ForeignKey(Book, on_delete=models.DO_NOTHING, null=True)
-    amount = models.IntegerField(help_text='Amount of books in order')
-    price = models.IntegerField(help_text="Write your price here")
-
-    def __str__(self):
-        """
-        String for representing the Model object (in Admin site etc.)
-        """
-        return self.name
-
-class Orders(models.Model):
-    """This class representing orders"""
-
-
