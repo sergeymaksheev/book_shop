@@ -1,53 +1,81 @@
 from rest_framework import serializers
 from orders.models import Order, OrderDetail
 from catalog.models import Book
-from users.models import CustomUser
 from rest_framework.exceptions import ValidationError
         
+
+
+
+class BooksToOrderSerializer(serializers.Serializer):
+    book_id = serializers.IntegerField(min_value=1)
+    quantity = serializers.IntegerField(min_value=0)
     
-# class OrderSerializer(serializers.Serializer):
-#     id = serializers.IntegerField()
-#     user = serializers.PrimaryKeyRelatedField(many=True, read_only=False)
-#     book = serializers.PrimaryKeyRelatedField(many=True, read_only=False)
 
-#     def create(self, validated_data):
-#         return Order.objects.create(**validated_data)
+class OrderDataSerializer(serializers.Serializer):
+    order_data = BooksToOrderSerializer(many=True)
 
-    # def validate_title(self, value):
+
+class OrderResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+    def validate(self, data):
+        for order_item in self.context['order']['order_data']:
+            try:
+                id = order_item['book_id']
+                quantity = order_item['quantity']
+                book = Book.objects.get(pk=id)
+
+                if book.therestofthebook.quantity < quantity:
+                    raise ValidationError(
+                        f'В остатках недостаточно книги {book.title} для заказа в количестве {quantity}!'
+                    )    
+            except Book.DoesNotExist:
+                raise ValidationError(
+                    f'Книги с id {id} не существует!'
+                )     
         
-    #     if 'django' not in value.lower():
-    #         raise serializers.ValidationError('dsdas')
-    #     return value
+        return data
+
+    def create(self, validated_data):
+        created_order = Order.objects.create(user=self.context['user'])
+        created_order.save()
+        order_detail = []
+
+        for order_item in self.context['order']['order_data']: 
+            quantity = order_item['quantity']
+            try:
+                book = Book.objects.get(pk=order_item['book_id'])
+                order_detail.append(
+                    OrderDetail(
+                        order_id = created_order.id,
+                        book_id=book.id,
+                        quantity=quantity,
+                        price_for_quantity=quantity * book.price
+                    )
+                )
+            except Book.DoesNotExist:
+                raise ValidationError(
+                    f"Книги с id {order_item['book_id']} не существует!"
+                )
+        
+        OrderDetail.objects.bulk_create(order_detail, batch_size=100)
+
+        return created_order
 
 class OrderDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
-    
         model = OrderDetail
-        fields = ['order_id', 'book_id', 'quantity']
-        read_only_fields = ['total_price']
-
-    def validate(self, data):
-        if data['quantity'] < 1:
-            raise ValidationError(
-                'Вы не выбрали необходимое количество книг. Пожалуйста выберете необходимое количество'
-            )
-        return data
-
-    def create(self, validated_data):
-        total_price = (Book.objects.get(pk = 'order_id'))
-
-    # def create(self, validated_data, context):
-    #     books_id = [b['id'] for b in validated_data['books']]
-    #     total_price = sum(Book.objects.filter(id__in=books_id).values_list('price'))
-    #     order = Order.objects.create(user=context['user'], total_price=total_price)
-    #     book_detail_data = []
-    #     OrderDetail.objects.bulk_create(book_detail_data)
+        fields = '__all__'
+        
 
 
-    # def get_total_price(self) -> int:
-    #         total_price = self.quantity * 100 # Book['book_id'].price
-    #         return total_price
-    
+class OrderListSerializer(serializers.ModelSerializer):
+    order_detail = OrderDetailSerializer(many=True, read_only=True)
+    total_price = serializers.FloatField()
 
-
+    class Meta:
+        model = Order
+        fields = ('id', 'user', 'is_paid', 'created', 'order_detail', 'total_price')

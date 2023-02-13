@@ -20,8 +20,7 @@ class Book(models.Model):
     weight = models.IntegerField(help_text="Enter a book's weight here", null=True)
     number_of_pages = models.IntegerField(help_text="Number_of_pages")
     price = models.IntegerField(validators=[MinValueValidator(0)], help_text="Write your price here")
-    user = models.ForeignKey(CustomUser, verbose_name='User', on_delete=models.SET_NULL, null=True)
-
+    
     def __str__(self):
         """
         String for representing the Model object.
@@ -51,6 +50,7 @@ class TheRestOfTheBook(models.Model):
         """
         return f'{self.book.title}, Остаток книг - {self.quantity}'
 
+
 class Author(models.Model):
     """This is class representing an authors"""
     first_name = models.CharField(max_length=100)
@@ -70,6 +70,7 @@ class Author(models.Model):
         String for representing the Model object.
         """
         return '%s, %s' % (self.last_name, self.first_name)
+
 
 class Genre(models.Model):
     """This class representing a book genre (e.g. Science Fiction, Non Fiction)"""

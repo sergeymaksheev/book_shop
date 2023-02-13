@@ -1,5 +1,6 @@
 from django.db import models
-from catalog.models import TheRestOfTheBook, Book
+from catalog.models import Book
+from orders.choises import ORDER_STATUS_CHOICES
 from users.models import CustomUser
 from django.core.validators import MinValueValidator
 
@@ -7,10 +8,14 @@ from django.core.validators import MinValueValidator
 # Create your models here.
 class Order(models.Model):
     """This class representing your order"""
-    user_id = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING, null=True)
-    status = models.CharField(max_length=100, default=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING, null=True)
+    status = models.CharField(
+        choices=ORDER_STATUS_CHOICES,
+        default='1',
+        max_length=1,
+    )
+    is_paid = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
-
 
     def __str__(self):
         """
@@ -22,12 +27,11 @@ class Order(models.Model):
 class OrderDetail(models.Model):
     """This class representing order detail"""
 
-    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
-    book_id = models.ForeignKey(TheRestOfTheBook, on_delete=models.DO_NOTHING, null=True)
-    quantity = models.IntegerField(validators=[MinValueValidator(0)])
-    total_price = models.IntegerField(validators=[MinValueValidator(0)])
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, default=None, related_name='order_detail')
+    book = models.ForeignKey(Book, on_delete=models.DO_NOTHING, null=True)
+    quantity = models.IntegerField(validators=[MinValueValidator(0)], default=0)
+    price_for_quantity = models.IntegerField(validators=[MinValueValidator(0)], default=0)
 
-    
 
     def __str__(self):
         """
