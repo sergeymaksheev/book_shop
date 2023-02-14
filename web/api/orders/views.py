@@ -3,10 +3,10 @@ from rest_framework.views import APIView
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework import generics
 from rest_framework import pagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.db.models import Sum
 
-from .serializers import OrderDataSerializer, OrderResponseSerializer, OrderListSerializer, OrderDetailSerializer
+from api.orders.serializers import *
 from orders.permissions import IsAdminOrReadOnly
 from orders.models import Order, OrderDetail
 
@@ -46,7 +46,24 @@ class OrderListAPIView(generics.ListAPIView):
             total_price=Sum('order_detail__price_for_quantity')
         )
     
-            
+class OrderStatusAPIView(generics.RetrieveUpdateAPIView):
+
+    queryset = Order.objects.select_related('user')
+    serializer_class = OrderStatusSerializer
+    permission_classes = [IsAdminUser]
+
+
+class OrderPaidAPIView(generics.RetrieveUpdateAPIView):
+
+    queryset = Order.objects.select_related('user')
+    serializer_class = OrderPaidSerializer
+    permission_classes = [IsAdminUser]
+
+
+    
+
+
+    
 
 
 

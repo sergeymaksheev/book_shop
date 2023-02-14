@@ -78,4 +78,29 @@ class OrderListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'user', 'is_paid', 'created', 'order_detail', 'total_price')
+        fields = ('id', 'user', 'status', 'is_paid', 'created_at', 'updated_at', 'order_detail', 'total_price')
+
+
+class OrderStatusSerializer(serializers.ModelSerializer):
+    order_detail = OrderDetailSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ('id', 'status', 'created_at', 'updated_at', 'order_detail')
+
+
+class OrderPaidSerializer(serializers.ModelSerializer):
+    order_detail = OrderDetailSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ('id', 'is_paid', 'status', 'created_at', 'updated_at', 'order_detail')
+        read_only_fields = ('status',)
+
+    def update(self, instance, validated_data):
+
+        instance.is_paid = validated_data.get('is_paid', instance.is_paid)
+        if instance.is_paid == True:
+            instance.status = '2'
+        instance.save()
+        return instance
