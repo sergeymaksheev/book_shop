@@ -97,10 +97,4 @@ class OrderPaidSerializer(serializers.ModelSerializer):
         fields = ('id', 'is_paid', 'status', 'created_at', 'updated_at', 'order_detail')
         read_only_fields = ('status',)
 
-    def update(self, instance, validated_data):
 
-        instance.is_paid = validated_data.get('is_paid', instance.is_paid)
-        if instance.is_paid == True:
-            instance.status = '2'
-        instance.save()
-        return instance
