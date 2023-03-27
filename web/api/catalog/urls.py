@@ -2,11 +2,8 @@ from django.urls import path
 # from rest_framework import routers
 from . import views
 
-# router = routers.SimpleRouter()
-# router.register(r'books', views.BookViewSet)
 
 urlpatterns = [
-    # path('', include(router.urls)),
     path('books/', views.BookList.as_view()),
     path('books_title/', views.BookTitle.as_view()),
     path('books/<int:pk>/', views.BookDetail.as_view()),

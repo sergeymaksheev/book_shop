@@ -23,7 +23,7 @@ services:
       DB_PORT: 5432
     depends_on:
       - postgres
-    command: /usr/local/bin/gunicorn book_shop.wsgi:application -w 2 -b :8000
+    command: /usr/local/bin/gunicorn book_shop.wsgi:application -w 2 -b :8000  --reload
   
   nginx:
     restart: always
