@@ -12,10 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
-
-
-load_dotenv()
+from decouple import config
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^5@agnshx+lclpdy5&=c%j8edm!lo+ol9zmtweuflr)i!n&ni6'
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -43,13 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'book_shop',
     'catalog.apps.CatalogConfig',
     'users.apps.UsersConfig',
     'orders.apps.OrdersConfig',
     'rest_framework',
     'rest_framework.authtoken',
-    'djoser'
 ]
 
 MIDDLEWARE = [
@@ -95,11 +90,11 @@ WSGI_APPLICATION = 'book_shop.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASS'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT')
+        'NAME': config('POSTGRES_NAME', cast=str),
+        'USER': config('POSTGRES_USER', cast=str),
+        'PASSWORD': config('POSTGRES_PASSWORD', cast=str),
+        'HOST': config('POSTGRES_HOST', cast=str),
+        'PORT': config('POSTGRES_PORT', cast=int)
     }
 }
 

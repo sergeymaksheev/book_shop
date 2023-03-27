@@ -1,24 +1,10 @@
-FROM python:3.10-alpine
+FROM python:3.10.7
 
 RUN python -m pip install --upgrade pip
-RUN pip install poetry
 
-# Copy in the config files:
-COPY pyproject.toml pyproject.toml 
-COPY poetry.lock poetry.lock
+WORKDIR /opt/app
+ADD requirements.txt /opt/app/requirements.txt
+RUN pip install -r /opt/app/requirements.txt
+ADD . /opt/app
 
-# Install only dependencies:
-
-RUN apk update
-RUN apk add postgresql-dev gcc python3-dev musl-dev
-
-RUN poetry config virtualenvs.create false && poetry install --no-root --only main
- 
-# Copy in everything else and install:
 COPY . .
-
-
-
-
-
-
