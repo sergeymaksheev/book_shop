@@ -11,19 +11,20 @@ services:
     volumes:
       - web-django:/usr/src/app
       - web-static:/usr/src/app/static
+      - ./web:/opt/app
     env_file: ./web/.env
     environment:
-      DEBUG: 'true'
+      - DEBUG='true'
       # The environment variable credentials that is needed 
       # in django settings for Postgres to work.
-      DB_HOST: postgres
-      DB_NAME: book_shop_db
-      DB_USER: bookshop_admin
-      DB_PASS: '0327'
-      DB_PORT: 5432
+      - POSTGRES_HOST
+      - POSTGRES_NAME
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD=0327
+      - POSTGRES_PORT
     depends_on:
       - postgres
-    command: /usr/local/bin/gunicorn book_shop.wsgi:application -w 2 -b :8000
+    command: /usr/local/bin/gunicorn book_shop.wsgi:application -w 2 -b :8000  --reload
   
   nginx:
     restart: always
@@ -45,9 +46,9 @@ services:
     environment:
       # The environment variable credentials that is needed 
       # in django settings for Postgres to work.
-      POSTGRES_DB: book_shop_db
-      POSTGRES_USER: bookshop_admin
-      POSTGRES_PASSWORD: 0327
+      - POSTGRES_NAME
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD=0327
 
 volumes:
   web-django:
